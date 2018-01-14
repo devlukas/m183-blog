@@ -35,6 +35,7 @@ namespace M183.Blog.Controllers
             if (await new UserManager().LoginAsync(viewModel))
             {
                 Session["Username"] = viewModel.Username;
+                await new UserManager().AddUserLoginAsync(viewModel.Username, Session.SessionID, GetIPAddress());
                 return RedirectToAction("Index", "Home");
             }
             return View(viewModel);
@@ -61,6 +62,23 @@ namespace M183.Blog.Controllers
             {
                 return Json(new {result = false, error = "Falscher Benutzername oder Passwort!"}, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private string GetIPAddress()
+        {
+            System.Web.HttpContext context = System.Web.HttpContext.Current;
+            string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+            if (!string.IsNullOrEmpty(ipAddress))
+            {
+                string[] addresses = ipAddress.Split(',');
+                if (addresses.Length != 0)
+                {
+                    return addresses[0];
+                }
+            }
+
+            return context.Request.ServerVariables["REMOTE_ADDR"];
         }
     }
 }

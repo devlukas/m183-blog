@@ -43,16 +43,18 @@ namespace M183.Blog.Manager
         {
             if (await ValidateCredentials(login.Username, login.Password))
             {
-                bool tokenValid =
-                    // if there is a token string with this content, assigned to this user and which is not expired
-                    await db.Tokens.Include(t => t.User).AnyAsync(
+                var token =
+                     // if there is a token string with this content, assigned to this user and which is not expired
+                     await db.Tokens.Include(t => t.User).FirstOrDefaultAsync(
                             t =>
                                 t.Tokenstring == login.SmsToken && t.Expiry > DateTime.Now &&
-                                t.User.Username == login.Username);
+                                t.User.Username == login.Username && t.DeletedDate == null);
 
-                if (tokenValid)
+                if (token != null)
                 {
-                    //await AddUserLogAsync(login.Username, $"Successful Login")
+                    token.DeletedDate = DateTime.Now;
+                    await db.SaveChangesAsync();
+                    await AddUserLogAsync(login.Username, $"Successful Login");
                     return true;
                 }
                 return false;
@@ -101,6 +103,20 @@ namespace M183.Blog.Manager
             {
                 throw new BlogError("Fehler beim Versenden des 2-Faktor-Authentifizierungs-Tokens. Ist Ihre Handynummer richtig?");
             }
+        }
+
+        public async Task AddUserLoginAsync(string username, string sessionId, string ipAdress)
+        {
+            var userLogin = new Userlogin
+            {
+                User = await db.Users.FirstAsync(u => u.Username == username),
+                Metadata = new Metadata(username),
+                SessionId = sessionId,
+                UserIpAdress = ipAdress
+            };
+            db.Userlogins.Add(userLogin);
+            await db.SaveChangesAsync();
+
         }
 
         public async Task AddUserLogAsync(string username, string message)
