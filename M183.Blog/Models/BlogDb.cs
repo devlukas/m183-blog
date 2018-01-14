@@ -15,7 +15,7 @@ namespace M183.Blog.Models
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Role> Role { get; set; }
+        public DbSet<Role> Roles { get; set; }
         public DbSet<Token> Tokens { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }

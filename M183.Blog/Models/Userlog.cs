@@ -9,5 +9,6 @@ namespace M183.Blog.Models
     {
         public int Id { get; set; }
         public string Message { get; set; }
+        public User User { get; set; }
     }
 }

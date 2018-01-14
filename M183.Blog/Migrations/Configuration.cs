@@ -5,14 +5,14 @@ namespace M183.Blog.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<M183.Blog.Models.ApplicationDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Models.BlogDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(M183.Blog.Models.ApplicationDbContext context)
+        protected override void Seed(Models.BlogDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

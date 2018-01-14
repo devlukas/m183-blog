@@ -11,12 +11,14 @@ namespace M183.Blog.Models
         public int Id { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
+        public string Email { get; set; }
         public string MobileNumber { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public Role Role { get; set; }
         public List<Userlogin> Logins { get; set; }
         public List<Userlog> Userlogs { get; set; }
+        public List<Token> Tokens { get; set; }
         public Metadata Metadata { get; set; }
     }
 }

@@ -199,6 +199,20 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Manager\BlogError.cs" />
+    <Compile Include="Manager\UserManager.cs" />
+    <Compile Include="Migrations\201801140955525_AddBaseStructure.cs" />
+    <Compile Include="Migrations\201801140955525_AddBaseStructure.Designer.cs">
+      <DependentUpon>201801140955525_AddBaseStructure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801141013515_AddEmail.cs" />
+    <Compile Include="Migrations\201801141013515_AddEmail.Designer.cs">
+      <DependentUpon>201801141013515_AddEmail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201801141308318_FixTokenReference.cs" />
+    <Compile Include="Migrations\201801141308318_FixTokenReference.Designer.cs">
+      <DependentUpon>201801141308318_FixTokenReference.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Metadata.cs" />
@@ -250,7 +264,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
@@ -258,7 +271,7 @@
     <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
@@ -283,6 +296,17 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201801140955525_AddBaseStructure.resx">
+      <DependentUpon>201801140955525_AddBaseStructure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801141013515_AddEmail.resx">
+      <DependentUpon>201801141013515_AddEmail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801141308318_FixTokenReference.resx">
+      <DependentUpon>201801141308318_FixTokenReference.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

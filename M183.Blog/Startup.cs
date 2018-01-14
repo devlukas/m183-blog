@@ -8,7 +8,7 @@ namespace M183.Blog
     {
         public void Configuration(IAppBuilder app)
         {
-            ConfigureAuth(app);
+            
         }
     }
 }

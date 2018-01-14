@@ -9,7 +9,9 @@ namespace M183.Blog.Models
     [ComplexType]
     public class Metadata
     {
-        Metadata(string username)
+        public Metadata() { }
+
+        public Metadata(string username)
         {
             this.ModifiedUser = username;
             this.CreationUser = username;

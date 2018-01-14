@@ -39,19 +39,11 @@ namespace M183.Blog.Models
         public bool RememberMe { get; set; }
     }
 
-    public class ForgotViewModel
-    {
-        [Required]
-        [Display(Name = "E-Mail")]
-        public string Email { get; set; }
-    }
-
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "E-Mail")]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "Username")]
+        public string Username { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -60,14 +52,29 @@ namespace M183.Blog.Models
 
         [Display(Name = "Speichern?")]
         public bool RememberMe { get; set; }
+
+        [Display(Name = "SMS-Code")]
+        public string SmsToken { get; set; }
     }
 
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "E-Mail")]
         public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "Vorname")]
+        public string Firstname { get; set; }
+
+        [Required]
+        [Display(Name = "Nachname")]
+        public string Lastname { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "\"{0}\" muss mindestens {2} Zeichen lang sein.", MinimumLength = 6)]
@@ -79,6 +86,11 @@ namespace M183.Blog.Models
         [Display(Name = "Kennwort bestätigen")]
         [Compare("Password", ErrorMessage = "Das Kennwort entspricht nicht dem Bestätigungskennwort.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [DataType(DataType.PhoneNumber)]
+        [Display(Name = "Mobiltelefon")]
+        public string MobilePhoneNumber { get; set; }
     }
 
     public class ResetPasswordViewModel
