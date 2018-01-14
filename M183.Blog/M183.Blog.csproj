@@ -213,6 +213,10 @@
     <Compile Include="Migrations\201801141308318_FixTokenReference.Designer.cs">
       <DependentUpon>201801141308318_FixTokenReference.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801141326504_AddMoreMetadata.cs" />
+    <Compile Include="Migrations\201801141326504_AddMoreMetadata.Designer.cs">
+      <DependentUpon>201801141326504_AddMoreMetadata.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Metadata.cs" />
@@ -306,6 +310,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801141308318_FixTokenReference.resx">
       <DependentUpon>201801141308318_FixTokenReference.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801141326504_AddMoreMetadata.resx">
+      <DependentUpon>201801141326504_AddMoreMetadata.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

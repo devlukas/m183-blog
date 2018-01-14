@@ -50,7 +50,11 @@ namespace M183.Blog.Manager
                                 t.Tokenstring == login.SmsToken && t.Expiry > DateTime.Now &&
                                 t.User.Username == login.Username);
 
-                if (tokenValid) return true;
+                if (tokenValid)
+                {
+                    //await AddUserLogAsync(login.Username, $"Successful Login")
+                    return true;
+                }
                 return false;
             }
             return false;
@@ -104,7 +108,8 @@ namespace M183.Blog.Manager
             var userLog = new Userlog
             {
                 User = db.Users.First(u => u.Username == username),
-                Message = message
+                Message = message,
+                Metadata = new Metadata(username)
             };
             db.Userlogs.Add(userLog);
             await db.SaveChangesAsync();

@@ -11,5 +11,6 @@ namespace M183.Blog.Models
         public User User { get; set; }
         public string Tokenstring { get; set; }
         public DateTime Expiry { get; set; }
+        public DateTime? DeletedDate { get; set; }
     }
 }
