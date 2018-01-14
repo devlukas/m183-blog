@@ -217,6 +217,10 @@
     <Compile Include="Migrations\201801141326504_AddMoreMetadata.Designer.cs">
       <DependentUpon>201801141326504_AddMoreMetadata.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201801141510197_AddUserBlock.cs" />
+    <Compile Include="Migrations\201801141510197_AddUserBlock.Designer.cs">
+      <DependentUpon>201801141510197_AddUserBlock.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Metadata.cs" />
@@ -313,6 +317,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201801141326504_AddMoreMetadata.resx">
       <DependentUpon>201801141326504_AddMoreMetadata.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201801141510197_AddUserBlock.resx">
+      <DependentUpon>201801141510197_AddUserBlock.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -13,7 +13,9 @@
                 @Html.AntiForgeryToken()
                 <h4>Lokales Konto für die Anmeldung verwenden.</h4>
                 <hr/>
-                @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+                <div id="validationSummary" class="text-danger">
+                    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+                </div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.Username, new {@class = "col-md-2 control-label"})
                     <div class="col-md-10">
@@ -35,14 +37,14 @@
                         @Html.ValidationMessageFor(m => m.SmsToken, "", new { @class = "text-danger" })
                     </div>
                 </div>
-                <div class="form-group">
+                @*<div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
                         <div class="checkbox">
                             @Html.CheckBoxFor(m => m.RememberMe)
                             @Html.LabelFor(m => m.RememberMe)
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
                         <input type="submit" value="Anmelden" class="btn btn-primary"/>
@@ -66,19 +68,37 @@
 </div>
 
 <script>
+  
+    if (@(Model != null && Model.ShowSmsTokenField)) {
+        $('#smsToken').show();
+    }
+
     function login() {
         if (!$('#smsToken').is(':visible')) {
             $.post('/Home/StartLogin',
                 { Username: $('#Username').val(), Password: $('#Password').val() },
                 function(data) {
+                    // empty validation summary area
+                    var validationSummary = getValidationSummaryArea();
+                    validationSummary.empty();
+
                     if (data["result"] === true) {
                         $('#smsToken').show();
                     } else {
-                        alert(data["error"]);
+                        validationSummary.append('<li>' + data["error"] + '</li>');
                     }
                 });
             return false;
         }
+    }
+
+    function getValidationSummaryArea() {
+        var validationSummary = $('#validationSummary ul.validation-summary-errors');
+        if (validationSummary.length == 0) {
+            $('#validationSummary').append('<ul class="validation-summary-errors"></ul>');
+            validationSummary = $('#validationSummary ul.validation-summary-errors');
+        }
+        return validationSummary;
     }
 </script>
 

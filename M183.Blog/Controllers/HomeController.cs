@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI.WebControls;
 using M183.Blog.Manager;
 using M183.Blog.Models;
 
@@ -32,38 +30,60 @@ namespace M183.Blog.Controllers
         [HttpPost]
         public async Task<ActionResult> Login(LoginViewModel viewModel)
         {
-            if (await new UserManager().LoginAsync(viewModel))
+            var userManager = new UserManager();
+
+            try
             {
-                Session["Username"] = viewModel.Username;
-                await new UserManager().AddUserLoginAsync(viewModel.Username, Session.SessionID, GetIPAddress());
-                return RedirectToAction("Index", "Home");
+                if (await userManager.LoginWithTokenAsync(viewModel))
+                {
+                    Session["Username"] = viewModel.Username;
+                    await new UserManager().AddUserLoginAsync(viewModel.Username, Session.SessionID, GetIPAddress());
+                    return RedirectToAction("Index", "Home");
+                }
             }
+            catch (BlogError error)
+            {
+                viewModel.SmsToken = "";
+                if (error.BlogErrorType == BlogErrorType.WrongUsernameOrPassword)
+                {
+                    viewModel.ShowSmsTokenField = true;
+                }
+                ModelState.AddModelError("", error.Message);
+            }
+            
             return View(viewModel);
         }
 
+        /// <summary>
+        /// JSON-API to Start the Login Process (Sends SMS-Token)
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> StartLogin(LoginViewModel viewModel)
         {
             var userManager = new UserManager();
-
-            if (await userManager.ValidateCredentials(viewModel.Username, viewModel.Password))
+            try
             {
-                try
+                // if the user is not blocked
+                if (await userManager.BaseLogin(viewModel))
                 {
                     await userManager.GenerateAndSendLoginTokenAsync(viewModel.Username);
-                    return Json(new { result = true }, JsonRequestBehavior.AllowGet);
+                    return Json(new {result = true}, JsonRequestBehavior.AllowGet);
                 }
-                catch (BlogError error)
-                {
-                    return Json(new { result = false, error = error}, JsonRequestBehavior.AllowGet);
-                }
+                return Json(new { result = false, error = "Falscher Benutzername oder Passwort" }, JsonRequestBehavior.AllowGet);
             }
-            else
+            catch (BlogError error)
             {
-                return Json(new {result = false, error = "Falscher Benutzername oder Passwort!"}, JsonRequestBehavior.AllowGet);
+                await userManager.AddUserLogAsync(viewModel.Username, error.Message);
+                return Json(new { result = false, error = error.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 
+        /// <summary>
+        /// Gets the Client Ip-Adress
+        /// </summary>
+        /// <returns></returns>
         private string GetIPAddress()
         {
             System.Web.HttpContext context = System.Web.HttpContext.Current;

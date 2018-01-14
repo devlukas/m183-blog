@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using M183.Blog.Manager;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
 using M183.Blog.Models;
 
 namespace M183.Blog.Controllers
@@ -42,10 +38,11 @@ namespace M183.Blog.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public ActionResult LogOff()
         {
-            Session["Username"] = null;
-            return RedirectToAction("Index", "Home");
+            HttpContext.GetOwinContext().Authentication.SignOut();
+            return RedirectToAction("Login", "Home");
         }
 
         private void AddErrors(string message)

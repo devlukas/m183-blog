@@ -55,6 +55,8 @@ namespace M183.Blog.Models
 
         [Display(Name = "SMS-Code")]
         public string SmsToken { get; set; }
+
+        public bool ShowSmsTokenField { get; set; }
     }
 
     public class RegisterViewModel

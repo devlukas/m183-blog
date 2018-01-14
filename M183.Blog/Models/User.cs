@@ -15,6 +15,7 @@ namespace M183.Blog.Models
         public string MobileNumber { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public bool Blocked { get; set; }
         public Role Role { get; set; }
         public List<Userlogin> Logins { get; set; }
         public List<Userlog> Userlogs { get; set; }

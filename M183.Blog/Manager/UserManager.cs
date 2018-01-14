@@ -13,6 +13,11 @@ namespace M183.Blog.Manager
     {
         private BlogDbContext db = new BlogDbContext();
 
+        /// <summary>
+        /// Registers a new user to the database
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         public async Task RegisterAsync(RegisterViewModel viewModel)
         {
             bool userExists = db.Users.Any(u => u.Username == viewModel.Username);
@@ -27,6 +32,7 @@ namespace M183.Blog.Manager
                     Metadata = new Metadata(viewModel.Username),
                     MobileNumber = viewModel.MobilePhoneNumber,
                     Password = EncryptPassword(viewModel.Password),
+                    Blocked = false,
                     // Assign Default-Role
                     Role = db.Roles.FirstOrDefault(r => r.Key == "Default")
                 };
@@ -39,29 +45,114 @@ namespace M183.Blog.Manager
             }
         }
 
-        public async Task<bool> LoginAsync(LoginViewModel login)
+        /// <summary>
+        /// Login a User with a Username, Password
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
+        public async Task<bool> BaseLogin(LoginViewModel login)
         {
-            if (await ValidateCredentials(login.Username, login.Password))
+            if (!await IsUserBlocked(login.Username))
+            {
+                // Check if username and password is valid
+                if (await ValidateCredentials(login.Username, login.Password))
+                {
+                    return true;
+                }
+                await AddUserLogAsync(login.Username, "WrongPasswordOrToken: Für dieses Konto wurde ein falsches Passwort eingegeben!");
+                await BlockUserIfToManySuccessiveWrongAttempts(login.Username);
+                throw new BlogError("Das angegebene Passwort oder der Benutzername ist nicht gültig!", BlogErrorType.WrongUsernameOrPassword);
+
+            }
+            await AddUserLogAsync(login.Username, "Der Benutzer hat sich versucht einzuloggen obwohl dieser bereits blockiert ist.");
+            throw new BlogError("Dieser Benutzer ist blockiert!", BlogErrorType.UserBlocked);
+        }
+
+        /// <summary>
+        /// Login a User with a Username, Password and Token
+        /// </summary>
+        /// <param name="login"></param>
+        /// <returns></returns>
+        public async Task<bool> LoginWithTokenAsync(LoginViewModel login)
+        {
+            // Check if user is blocker
+            if (await BaseLogin(login))
             {
                 var token =
-                     // if there is a token string with this content, assigned to this user and which is not expired
-                     await db.Tokens.Include(t => t.User).FirstOrDefaultAsync(
-                            t =>
-                                t.Tokenstring == login.SmsToken && t.Expiry > DateTime.Now &&
-                                t.User.Username == login.Username && t.DeletedDate == null);
+                    // if there is a token string with this content, assigned to this user and which is not expired
+                    await db.Tokens.Include(t => t.User).FirstOrDefaultAsync(
+                        t =>
+                            t.Tokenstring == login.SmsToken && t.Expiry > DateTime.Now &&
+                            t.User.Username == login.Username && t.DeletedDate == null);
+
+                // TOD: REMOVE THIS AFTER DEVELOPMENT
+                if (login.SmsToken == "test")
+                {
+                    return true;
+                }
 
                 if (token != null)
                 {
                     token.DeletedDate = DateTime.Now;
                     await db.SaveChangesAsync();
-                    await AddUserLogAsync(login.Username, $"Successful Login");
+                    await AddUserLogAsync(login.Username, "Successful Login");
                     return true;
                 }
-                return false;
+                await AddUserLogAsync(login.Username, "WrongPasswordOrToken: Das angegebene Token ist nicht gültig oder bereits abgelaufen!");
+                await BlockUserIfToManySuccessiveWrongAttempts(login.Username);
+                throw new BlogError("Das angegebene Token ist nicht gültig!", BlogErrorType.TokenNotValid);
             }
             return false;
         }
 
+        /// <summary>
+        /// Returns if a user is blocked or not
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public async Task<bool> IsUserBlocked(string username)
+        {
+            return await db.Users.AnyAsync(u => u.Username == username && u.Blocked);
+        }
+
+        /// <summary>
+        /// Gets the Role of a given user
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public string GetUserRole(string username)
+        {
+            return db.Users.Include(u => u.Role).First(u => u.Username == username).Role.Key;
+        }
+
+        /// <summary>
+        /// Blocks the user if he has too many successive wrong attempts
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public async Task BlockUserIfToManySuccessiveWrongAttempts(string username)
+        {
+            var lastSuccessfulLogin = db.Userlogins.Where(u => u.User.Username == username).OrderByDescending(u => u.Metadata.CreationDate).FirstOrDefault();
+            DateTime? lastLoginDate = lastSuccessfulLogin?.Metadata.CreationDate;
+
+            int successiveFailedAttempts = await db.Userlogs.CountAsync(u =>
+                u.Message.Contains("WrongPasswordOrToken") &&
+                (lastLoginDate == null || u.Metadata.CreationDate > lastLoginDate));
+
+            if (successiveFailedAttempts >= 3)
+            {
+                var user = await db.Users.FirstAsync(u => u.Username == username);
+                user.Blocked = true;
+                await db.SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
+        /// Checks if a given username and password is existing for one user
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public async Task<bool> ValidateCredentials(string username, string password)
         {
             string encryptedPassword = EncryptPassword(password);
@@ -69,6 +160,11 @@ namespace M183.Blog.Manager
             return userExists;
         }
 
+        /// <summary>
+        /// Generates and sesnds a new login token to the mobilephone of a given user
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public async Task GenerateAndSendLoginTokenAsync(string username)
         {
             User user = await db.Users.FirstAsync(u => u.Username == username);
@@ -105,6 +201,13 @@ namespace M183.Blog.Manager
             }
         }
 
+        /// <summary>
+        /// Adds a new User-Login Entry for a given Username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="sessionId"></param>
+        /// <param name="ipAdress"></param>
+        /// <returns></returns>
         public async Task AddUserLoginAsync(string username, string sessionId, string ipAdress)
         {
             var userLogin = new Userlogin
@@ -119,11 +222,17 @@ namespace M183.Blog.Manager
 
         }
 
+        /// <summary>
+        /// Adds a new User-Log Entry for a given Username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task AddUserLogAsync(string username, string message)
         {
             var userLog = new Userlog
             {
-                User = db.Users.First(u => u.Username == username),
+                User = db.Users.FirstOrDefault(u => u.Username == username),
                 Message = message,
                 Metadata = new Metadata(username)
             };
@@ -131,6 +240,11 @@ namespace M183.Blog.Manager
             await db.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Encrypts a given Password
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
         private string EncryptPassword(string password)
         {
             byte[] data = System.Text.Encoding.ASCII.GetBytes(password);
@@ -138,6 +252,11 @@ namespace M183.Blog.Manager
             return System.Text.Encoding.ASCII.GetString(data);
         }
 
+        /// <summary>
+        /// Generates a random token
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
         private string RandomString(int length)
         {
             var random = new Random();
