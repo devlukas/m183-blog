@@ -1,6 +1,7 @@
 namespace M183.Blog.Migrations
 {
     using System;
+    using Models;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
@@ -18,14 +19,30 @@ namespace M183.Blog.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            User user = context.Users.First(u => u.Id == 1);
+            Post post = new Post
+            {
+                Title = "Wie man an gute Noten kommt",
+                Content = "Alle Schüler sehnen sich nach guten Noten. " +
+                    "Strategien wie man an gute Noten kommt stellen wir hier vor.",
+                User = user,
+                Metadata = new Metadata(user.Username)
+            };
+
+            context.Posts.AddOrUpdate(
+                p => p.Id, post
+            );
+
+            context.Comments.AddOrUpdate(
+                c => c.Id,
+                new Comment
+                {
+                    Post = post,
+                    Content = "Werde ich direkt ausprobieren!",
+                    User = user,
+                    Metadata = new Metadata(user.Username)
+                }
+            );
         }
     }
 }

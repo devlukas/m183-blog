@@ -1,0 +1,26 @@
+﻿@using M183.Blog.Models;
+@model PostViewModel
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="post">
+    <div class="header">
+        <h2>@Model.Title</h2>
+        <p><b>Autor</b> @Model.Username</p>
+    </div>
+    <div class="content">
+        <p>@Model.Content</p>
+    </div>
+</div>
+
+<div class="comments">
+    <h2>Kommentare</h2>
+    @foreach (CommentViewModel comment in Model.Comments)
+    {
+        <div class="comment">
+            <p><b>@comment.User kommentiert: </b><i>@comment.Content</i></p>
+        </div>
+    }
+</div>
