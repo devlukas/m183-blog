@@ -22,6 +22,17 @@ namespace M183.Blog.Manager
             }).ToList();
         }
 
+        public List<PostViewModel> GetPublishedPosts()
+        {
+            return db.Posts.Where(p => p.Published).Select(p => new PostViewModel()
+            {
+                Id = p.Id,
+                Username = p.User.Username,
+                Title = p.Title,
+                Content = p.Content
+            }).ToList();
+        }
+
         public PostViewModel GetPostById(int id)
         {
             Post post = db.Posts.First(p => p.Id == id);
