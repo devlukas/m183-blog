@@ -11,6 +11,17 @@ namespace M183.Blog.Manager
     {
         private BlogDbContext db = new BlogDbContext();
 
+        public List<PostViewModel> GetPosts()
+        {
+            return db.Posts.Select(p => new PostViewModel()
+            {
+                Id = p.Id,
+                Username = p.User.Username,
+                Title = p.Title,
+                Content = p.Content
+            }).ToList();
+        }
+
         public List<PostViewModel> GetPostsByUsername(string username)
         {
             return db.Posts.Where(p => p.User.Username == username).Select(p => new PostViewModel()
@@ -38,6 +49,7 @@ namespace M183.Blog.Manager
             Post post = db.Posts.First(p => p.Id == id);
             return new PostViewModel()
             {
+                Id = post.Id,
                 Username = post.User.Username,
                 Title = post.Title,
                 Content = post.Content,
@@ -48,6 +60,31 @@ namespace M183.Blog.Manager
                     Id = c.Id
                 }).ToList()
             };
+        }
+
+        public Post GetPost (int id)
+        {
+            return db.Posts.First(p => p.Id == id);
+        }
+
+        /// <summary>
+        /// Add an user comment to database
+        /// </summary>
+        /// <param name="comment">The comment</param>
+        /// <param name="postId">The post id</param>
+        /// <param name="username">The user's name</param>
+        public void Comment (string comment, int postId, string username)
+        {
+            UserManager userManager = new UserManager();
+
+            db.Comments.Add(new Comment()
+            {
+                Content = comment,
+                Metadata = new Metadata(username),
+                Post = GetPost(postId),
+                User = userManager.GetUser(username)
+            });
+            db.SaveChanges();
         }
     }
 }

@@ -15,6 +15,16 @@ namespace M183.Blog.Manager
         private BlogDbContext db = new BlogDbContext();
 
         /// <summary>
+        /// Returns UserViewModel by username
+        /// </summary>
+        /// <param name="username">The username</param>
+        /// <returns>User View Model</returns>
+        public User GetUser(string username)
+        {
+            return db.Users.First(u => u.Username == username);
+        }
+
+        /// <summary>
         /// Registers a new user to the database
         /// </summary>
         /// <param name="viewModel"></param>

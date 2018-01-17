@@ -1,0 +1,33 @@
+﻿@using M183.Blog.Models;
+@model DetailViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="post">
+    <div class="header">
+        <h4>@Model.Post.Title</h4>
+        <p><b>Autor</b> @Model.Post.Username</p>
+    </div>
+    <div class="content">
+        <p>@Model.Post.Content</p>
+    </div>
+</div>
+<div class="comments">
+    @foreach (CommentViewModel comment in Model.Post.Comments)
+    {
+        <div class="comment">
+            <p><b>@comment.User kommentiert: </b><i>@comment.Content</i></p>
+        </div>
+    }
+
+    @using (Html.BeginForm("Comment", "Post", FormMethod.Post, new { @class = "form-vertical comment-box", role = "form" }))
+    {
+        @Html.HiddenFor(m => m.Post.Id)
+        <div class="form-group">
+            @Html.LabelFor(m => m.Comment, "Kommentar", new { @class = "control-label" })
+            @Html.TextAreaFor(m => m.Comment, new { @class = "form-control" })
+        </div>
+        <button type="submit" class="btn btn-primary">Kommentieren</button>
+    }
+</div>
+
