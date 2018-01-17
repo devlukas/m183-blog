@@ -13,10 +13,5 @@ namespace M183.Blog.Controllers
                 Posts = new PostManager().GetPostsByUsername(username)
             });
         }
-
-        public ActionResult DetailPost(int id)
-        {
-            return View(new PostManager().GetPostById(id));
-        }
     }
 }

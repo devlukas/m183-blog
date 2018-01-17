@@ -12,7 +12,7 @@
     {
         <div class="post">
             <div class="header">
-                <h2>@Html.ActionLink(post.Title, "DetailPost", new { post.Id })</h2>
+                <h4>@Html.ActionLink(post.Title, "Index", "Post", new { post.Id }, null)</h4>
             </div>
             <div class="content">
                 <p>@post.Content</p>
