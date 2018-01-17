@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.UI.WebControls;
 using M183.Blog.Models;
 
 namespace M183.Blog.Manager
@@ -238,6 +239,18 @@ namespace M183.Blog.Manager
             };
             db.Userlogs.Add(userLog);
             await db.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Writes necessary data to the database to complete the login process
+        /// </summary>
+        /// <param name="username"></param>
+        public async Task Logout(string username)
+        {
+            var userlogin =
+                await db.Userlogins.FirstOrDefaultAsync(u => u.DeletedDate == null && u.User.Username == username);
+            userlogin.DeletedDate = DateTime.Now;
+            await this.AddUserLogAsync(username, "Logout");
         }
 
         /// <summary>

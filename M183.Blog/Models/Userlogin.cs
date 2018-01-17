@@ -11,6 +11,7 @@ namespace M183.Blog.Models
         public User User { get; set; }
         public string UserIpAdress { get; set; }
         public string SessionId { get; set; }
+        public DateTime? DeletedDate { get; set; }
         public Metadata Metadata { get; set; }
     }
 }

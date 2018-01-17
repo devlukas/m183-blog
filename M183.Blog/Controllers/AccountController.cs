@@ -39,9 +39,10 @@ namespace M183.Blog.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult LogOff()
+        public async Task<ActionResult> LogOff()
         {
-            HttpContext.GetOwinContext().Authentication.SignOut();
+            await new UserManager().Logout(Session["Username"].ToString());
+            Session["Username"] = null;
             return RedirectToAction("Login", "Home");
         }
 
