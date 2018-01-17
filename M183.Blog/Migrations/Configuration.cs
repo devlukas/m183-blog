@@ -26,6 +26,7 @@ namespace M183.Blog.Migrations
                 Content = "Alle Schüler sehnen sich nach guten Noten. " +
                     "Strategien wie man an gute Noten kommt stellen wir hier vor.",
                 User = user,
+                Published = true,
                 Metadata = new Metadata(user.Username)
             };
 
