@@ -12,7 +12,10 @@ namespace M183.Blog.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            return View(new DashboardViewModel()
+            {
+                Posts = new PostManager().GetPublishedPosts()
+            });
         }
 
         public ActionResult About()
