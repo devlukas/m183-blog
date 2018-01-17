@@ -4,7 +4,7 @@ using M183.Blog.Models;
 
 namespace M183.Blog.Controllers
 {
-    public class DashboardController : Controller
+    public class UserDashboardController : Controller
     {
         public ActionResult Index()
         {
