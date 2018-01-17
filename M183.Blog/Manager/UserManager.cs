@@ -76,11 +76,11 @@ namespace M183.Blog.Manager
         /// <returns></returns>
         public async Task<bool> LoginWithTokenAsync(LoginViewModel login)
         {
-            // Check if user is blocker
+            // Basic Userlogin Check (Username & Password)
             if (await BaseLogin(login))
             {
                 var token =
-                    // if there is a token string with this content, assigned to this user and which is not expired
+                    // search a token string with this content, assigned to this user and which is not expired
                     await db.Tokens.Include(t => t.User).FirstOrDefaultAsync(
                         t =>
                             t.Tokenstring == login.SmsToken && t.Expiry > DateTime.Now &&
@@ -133,15 +133,19 @@ namespace M183.Blog.Manager
         /// <returns></returns>
         public async Task BlockUserIfToManySuccessiveWrongAttempts(string username)
         {
+            // get the last successful login-date
             var lastSuccessfulLogin = db.Userlogins.Where(u => u.User.Username == username).OrderByDescending(u => u.Metadata.CreationDate).FirstOrDefault();
             DateTime? lastLoginDate = lastSuccessfulLogin?.Metadata.CreationDate;
 
+            // search for log-entries with the key 'WrongPasswordOrToken' since the last successful-login and count them
             int successiveFailedAttempts = await db.Userlogs.CountAsync(u =>
                 u.Message.Contains("WrongPasswordOrToken") &&
                 (lastLoginDate == null || u.Metadata.CreationDate > lastLoginDate));
 
+            // if there were 3 or more failed attempts
             if (successiveFailedAttempts >= 3)
             {
+                // get user and block him
                 var user = await db.Users.FirstAsync(u => u.Username == username);
                 user.Blocked = true;
                 await db.SaveChangesAsync();
@@ -169,6 +173,8 @@ namespace M183.Blog.Manager
         public async Task GenerateAndSendLoginTokenAsync(string username)
         {
             User user = await db.Users.FirstAsync(u => u.Username == username);
+
+            // generate token
             string token = RandomString(4);
 
             HttpClient client = new HttpClient();
@@ -181,7 +187,9 @@ namespace M183.Blog.Manager
                { "text", $"Ihr Token lautet:\n{token}"}
             };
             var content = new FormUrlEncodedContent(values);
+            // post the above data to the nexmo api
             var response = await client.PostAsync("https://rest.nexmo.com/sms/json", content);
+
             if (response.IsSuccessStatusCode)
             {
                 // create and store token
@@ -254,7 +262,7 @@ namespace M183.Blog.Manager
         }
 
         /// <summary>
-        /// Encrypts a given Password
+        /// Encrypts a given Password with SHA256
         /// </summary>
         /// <param name="password"></param>
         /// <returns></returns>
@@ -273,6 +281,7 @@ namespace M183.Blog.Manager
         private string RandomString(int length)
         {
             var random = new Random();
+            // Randomly generates a string with this letters and digits
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
