@@ -23,21 +23,28 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Dashboard", "Index", "Dashboard")</li>
+                    <li>@Html.ActionLink("Dashboard", "Index", "UserDashboard")</li>
+                    <li>@Html.ActionLink("Admin", "Index", "AdminDashboard")</li>
                     <li>@Html.ActionLink("Info", "About", "Home")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - M183 Blog Lukas Weber & Pascal Aregger</p>
-        </footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">@RenderBody()</div>
+        </div>
     </div>
-
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>&copy; @DateTime.Now.Year - M183 Blog Lukas Weber & Pascal Aregger</p>
+                </div>
+            </div>
+        </div>
+    </footer>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
