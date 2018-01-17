@@ -1,0 +1,20 @@
+﻿@using M183.Blog.Models;
+@model DashboardViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<h2>Admin Dashboard</h2>
+<div class="posts">
+    @foreach (PostViewModel post in Model.Posts)
+    {
+        <div class="post">
+            <div class="header">
+                <h4>@Html.ActionLink(post.Title, "Index", "Post", new { post.Id }, null)</h4>
+            </div>
+            <div class="content">
+                <p>@post.Content</p>
+            </div>
+        </div>
+    }
+</div>
