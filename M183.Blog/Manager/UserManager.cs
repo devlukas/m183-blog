@@ -137,6 +137,17 @@ namespace M183.Blog.Manager
         }
 
         /// <summary>
+        /// Checks if a user has a given role
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="roleKey"></param>
+        /// <returns></returns>
+        public bool HasRoles(string username, string roleKey)
+        {
+            return db.Users.Any(u => u.Username == username && u.Role.Key == roleKey);
+        }
+
+        /// <summary>
         /// Blocks the user if he has too many successive wrong attempts
         /// </summary>
         /// <param name="username"></param>
