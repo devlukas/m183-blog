@@ -8,7 +8,7 @@ namespace M183.Blog.Controllers
     {
         public ActionResult Index()
         {
-            if (Session["Username"] != null && new UserManager().HasRoles(Session["Username"].ToString(), "Default"))
+            if (Session["Username"] != null)
             {
                 string username = "basis"; //TODO: (string)Session["Username"];
                 return View(new DashboardViewModel()

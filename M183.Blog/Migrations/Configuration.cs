@@ -32,8 +32,21 @@ namespace M183.Blog.Migrations
                 Metadata = new Metadata("System"),
                 Key = "Admin"
             });
-            
-            User user = context.Users.First(u => u.Id == 1);
+            context.Users.Add(new User
+            {
+                Username = "test",
+                Firstname = "Max",
+                Lastname = "Test",
+                Email = "test@test.ch",
+                MobileNumber = "+41 00 000 00 00",
+                Blocked = false,
+                Metadata = new Metadata("System"),
+                Password = new UserManager().EncryptPassword("test123"),
+                Role = context.Roles.First(r => r.Key == "Default"),
+
+            });
+
+            User user = context.Users.First();
             Post post = new Post
             {
                 Title = "Wie man an gute Noten kommt",

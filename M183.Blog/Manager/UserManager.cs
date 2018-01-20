@@ -287,7 +287,7 @@ namespace M183.Blog.Manager
         /// </summary>
         /// <param name="password"></param>
         /// <returns></returns>
-        private string EncryptPassword(string password)
+        public string EncryptPassword(string password)
         {
             byte[] data = System.Text.Encoding.ASCII.GetBytes(password);
             data = new System.Security.Cryptography.SHA256Managed().ComputeHash(data);
