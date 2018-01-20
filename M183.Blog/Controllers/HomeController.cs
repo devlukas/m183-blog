@@ -8,6 +8,21 @@ using M183.Blog.Models;
 
 namespace M183.Blog.Controllers
 {
+
+    /*
+     * 1. Wir haben uns für SHA-256 entschieden, da sich dieser Algorithmus 
+     * nach unseren Recherechen als sehr sicher erwiesen hat
+     * 
+     * 2. Session theft & Eavesdropping:
+     * Das Übernehmen einer Session wird durch das Überprüfen von IP-Adresse von Browser zusätzlich erschwert
+     * 
+     * 3. Der Angreifer würde durch das Abhören vom Traffic die SessionId klauen oder 
+     * duch eine XXS Attacke die Cookies mit der SessionID zu sich senden.
+     * Durch das Überprüfen vo IP-Adresse und Browser müsste der Angreifer die IP-Adresse des Opfers kennen und in der Lage sein, uns diese vorzugaukeln.
+     * Das erschwer den Angriff extrem
+     * 
+     */
+
     public class HomeController : Controller
     {
         public ActionResult Index()
