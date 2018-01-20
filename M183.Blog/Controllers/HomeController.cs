@@ -41,7 +41,14 @@ namespace M183.Blog.Controllers
                 {
                     Session["Username"] = viewModel.Username;
                     await new UserManager().AddUserLoginAsync(viewModel.Username, Session.SessionID, GetIPAddress());
-                    return RedirectToAction("Index", "Home");
+                    string role = new UserManager().GetUserRole(viewModel.Username);
+                    if (role == "Admin")
+                    {
+                        return RedirectToAction("Index", "AdminDashboard");
+                    } else
+                    {
+                        return RedirectToAction("Index", "UserDashboard");
+                    }
                 }
             }
             catch (BlogError error)

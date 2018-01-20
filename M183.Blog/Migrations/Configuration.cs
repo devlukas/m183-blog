@@ -5,6 +5,7 @@ namespace M183.Blog.Migrations
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
+    using Manager;
 
     internal sealed class Configuration : DbMigrationsConfiguration<Models.BlogDbContext>
     {
@@ -19,6 +20,19 @@ namespace M183.Blog.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data. E.g.
+            context.Roles.Add(new Role
+            {
+                Key = "Default",
+                Metadata = new Metadata("System"),
+                Title = "Standard User"
+            });
+            context.Roles.Add(new Role
+            {
+                Title = "Administrator",
+                Metadata = new Metadata("System"),
+                Key = "Admin"
+            });
+            
             User user = context.Users.First(u => u.Id == 1);
             Post post = new Post
             {

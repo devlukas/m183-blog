@@ -8,10 +8,18 @@ namespace M183.Blog.Controllers
     {
         public ActionResult Index()
         {
-            string username = "basis"; //TODO: (string)Session["Username"];
-            return View(new DashboardViewModel() {
-                Posts = new PostManager().GetPostsByUsername(username)
-            });
+            if (Session["Username"] != null && new UserManager().HasRoles(Session["Username"].ToString(), "Default"))
+            {
+                string username = "basis"; //TODO: (string)Session["Username"];
+                return View(new DashboardViewModel()
+                {
+                    Posts = new PostManager().GetPostsByUsername(username)
+                });
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
+            }
         }
     }
 }

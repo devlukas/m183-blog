@@ -9,10 +9,17 @@ namespace M183.Blog.Controllers
         // GET: AdminDashboard
         public ActionResult Index()
         {
-            return View(new DashboardViewModel()
+            if (Session["Username"] != null && new UserManager().HasRoles(Session["Username"].ToString(), "Admin"))
             {
-                Posts = new PostManager().GetPosts()
-            });
+                return View(new DashboardViewModel()
+                {
+                    Posts = new PostManager().GetPosts()
+                });
+            } else
+            {
+                return RedirectToAction("Login", "Home");
+            }
+           
         }
     }
 }
