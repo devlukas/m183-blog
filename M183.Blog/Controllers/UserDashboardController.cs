@@ -10,7 +10,7 @@ namespace M183.Blog.Controllers
         {
             if (Session["Username"] != null)
             {
-                string username = "basis"; //TODO: (string)Session["Username"];
+                string username = Session["Username"].ToString();
                 return View(new DashboardViewModel()
                 {
                     Posts = new PostManager().GetPostsByUsername(username)
