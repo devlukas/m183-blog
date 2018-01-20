@@ -96,11 +96,6 @@ namespace M183.Blog.Manager
                             t.Tokenstring == login.SmsToken && t.Expiry > DateTime.Now &&
                             t.User.Username == login.Username && t.DeletedDate == null);
 
-                // TOD: REMOVE THIS AFTER DEVELOPMENT
-                if (login.SmsToken == "test")
-                {
-                    return true;
-                }
 
                 if (token != null)
                 {
