@@ -43,6 +43,7 @@ namespace M183.Blog.Manager
 
         /// <summary>
         /// Returns all posts where the title or the content contains the search input
+        /// Only for Admins
         /// </summary>
         public List<PostViewModel> GetSearchedPosts(string search)
         {
@@ -51,7 +52,6 @@ namespace M183.Blog.Manager
                 search = String.Empty;
             }
             return db.Posts
-                .Where(p => p.Published)
                 .Where(p => p.Title.Contains(search) || p.Content.Contains(search))
                 .Select(p => new PostViewModel()
             {
