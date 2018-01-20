@@ -11,17 +11,11 @@ namespace M183.Blog.Manager
     {
         private BlogDbContext db = new BlogDbContext();
 
-        public List<PostViewModel> GetPosts()
-        {
-            return db.Posts.Select(p => new PostViewModel()
-            {
-                Id = p.Id,
-                Username = p.User.Username,
-                Title = p.Title,
-                Content = p.Content
-            }).ToList();
-        }
-
+        /// <summary>
+        /// Returns all posts where the author matches the username
+        /// </summary>
+        /// <param name="username">The author's username</param>
+        /// <returns>Filtered posts</returns>
         public List<PostViewModel> GetPostsByUsername(string username)
         {
             return db.Posts.Where(p => p.User.Username == username).Select(p => new PostViewModel()
@@ -33,6 +27,9 @@ namespace M183.Blog.Manager
             }).ToList();
         }
 
+        /// <summary>
+        /// Returns all posts where the publish flag is set
+        /// </summary>
         public List<PostViewModel> GetPublishedPosts()
         {
             return db.Posts.Where(p => p.Published).Select(p => new PostViewModel()
@@ -44,6 +41,9 @@ namespace M183.Blog.Manager
             }).ToList();
         }
 
+        /// <summary>
+        /// Returns all posts where the title or the content contains the search input
+        /// </summary>
         public List<PostViewModel> GetSearchedPosts(string search)
         {
             if (search == null)
@@ -62,6 +62,11 @@ namespace M183.Blog.Manager
             }).ToList();
         }
 
+        /// <summary>
+        /// Returns the post view model by the post id
+        /// </summary>
+        /// <param name="id">Id of the post</param>
+        /// <returns>Post view model</returns>
         public PostViewModel GetPostById(int id)
         {
             Post post = db.Posts.First(p => p.Id == id);
@@ -80,6 +85,11 @@ namespace M183.Blog.Manager
             };
         }
 
+        /// <summary>
+        /// Returns the post by the post Id
+        /// </summary>
+        /// <param name="id">Id of the post</param>
+        /// <returns>The post object</returns>
         public Post GetPost (int id)
         {
             return db.Posts.First(p => p.Id == id);

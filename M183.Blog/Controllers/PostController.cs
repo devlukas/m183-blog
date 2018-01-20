@@ -18,7 +18,7 @@ namespace M183.Blog.Controllers
         [HttpPost]
         public ActionResult Comment(DetailViewModel viewModel)
         {
-            new PostManager().Comment(viewModel.Comment, viewModel.Post.Id, Session["Username"].ToString()); //TODO
+            new PostManager().Comment(viewModel.Comment, viewModel.Post.Id, Session["Username"].ToString());
             return RedirectToAction("Index", new { viewModel.Post.Id });
         }
     }
