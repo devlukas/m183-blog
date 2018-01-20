@@ -8,6 +8,7 @@ namespace M183.Blog.Models
     public class DashboardViewModel
     {
         public List<PostViewModel> Posts { get; set; }
+        public string Search { get; set; }
     }
 
     public class UserViewModel

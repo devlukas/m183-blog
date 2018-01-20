@@ -6,20 +6,18 @@ namespace M183.Blog.Controllers
 {
     public class AdminDashboardController : Controller
     {
-        // GET: AdminDashboard
-        public ActionResult Index()
+        public ActionResult Index(string search)
         {
             if (Session["Username"] != null && new UserManager().HasRoles(Session["Username"].ToString(), "Admin"))
             {
                 return View(new DashboardViewModel()
                 {
-                    Posts = new PostManager().GetPosts()
+                    Posts = new PostManager().GetSearchedPosts(search)
                 });
             } else
             {
                 return RedirectToAction("Login", "Home");
             }
-           
         }
     }
 }
